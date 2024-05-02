@@ -2,7 +2,7 @@ import React from "react";
 import RestaurantCard from "./RestaurantCard";
 import { useState , useEffect } from "react";
 import Shimmer from "./Shimmer";
-import YourMind from "./YourMind";
+import { Link } from "react-router-dom";
 // import resList from "../utils/mockData";
 
 
@@ -15,24 +15,23 @@ function Body(){
     const [listOfRestaurantCopy , setListOfRestaurantCopy] = useState([])
     const [searchText , setSearchText] = useState("")
 
-    
 
-
+    //If no dependecy array =>  useEffect is called on every render
     useEffect(()=>{
-      //first the Body Component is rendered then API Call wait for data and re-rendered once again 
+      
       fetchData();
-    }, [])
+    },[])
 
 
     // Wheneever state changes react will triggered the reconciliation process (re-rendered the component)
     console.log("Body Rendered")
 
     async function fetchData(){
-        const response = await fetch(`https://www.swiggy.com/dapi/restaurants/list/v5?lat=28.5972383&lng=77.1904041&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`);
+        const response = await fetch(`https://www.swiggy.com/dapi/restaurants/list/v5?lat=28.6330086&lng=77.2076411&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`);
         const json = await response.json();
 
-        console.log(json);
-        //we will update listOfRestaurant with new data coming from API3
+        console.log(json)
+        //we will update or extract  listOfRestaurant with new data coming from API3  
         setListOfRestaurant(json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
         //we will also update the copy of listofRestaurant 
         setListOfRestaurantCopy(json?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants)
@@ -60,7 +59,7 @@ function Body(){
       function searchHandler(){
         
         
-        console.log(searchText);
+        
         
         
         //filter the restaurant card and update the ui
@@ -81,7 +80,6 @@ function Body(){
       
     return listOfRestaurant.length === 0 ? <Shimmer></Shimmer> :  (
       <div className="body">
-        
         <div className="flex">
         <div className="search">
           {/* we will Need to update the value of searchText */}
@@ -98,7 +96,7 @@ function Body(){
           {/* we will create map for iterating over each element and it return RestaurantCard with props set to restaurant */}
           {
             listOfRestaurantCopy.map((restaurant) => (
-              <RestaurantCard key={restaurant?.info?.id} resData={restaurant}></RestaurantCard>
+             <Link key={restaurant?.info?.id} to={"/restaurants/" + restaurant?.info?.id}><RestaurantCard  resData={restaurant}></RestaurantCard></Link>
             ))
           }
         </div>
